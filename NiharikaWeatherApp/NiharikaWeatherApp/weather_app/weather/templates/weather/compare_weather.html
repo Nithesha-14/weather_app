@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Weather</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Compare Weather</h1>
+            <p>Choose two or more countries to compare their weather details.</p>
+        </header>
+
+        <form method="POST" action="{% url 'compare_weather' %}" class="compare-form">
+            {% csrf_token %}
+            <label for="countries">Select Countries:</label>
+            <select id="countries" name="countries" multiple>
+                <option value="India">India</option>
+                <option value="USA">USA</option>
+                <option value="Australia">Australia</option>
+                <option value="Brazil">Brazil</option>
+                <option value="Canada">Canada</option>
+                <option value="Germany">Germany</option>
+                <option value="Japan">Japan</option>
+                <option value="UK">UK</option>
+                <option value="France">France</option>
+                <option value="Russia">Russia</option>
+                <option value="China">China</option>
+                <!-- Add other countries here -->
+            </select>
+
+            <br><br>
+            <div class="bb">
+            <button type="submit">Compare</button>
+        </div>
+        </form>
+    </div>
+</body>
+</html>

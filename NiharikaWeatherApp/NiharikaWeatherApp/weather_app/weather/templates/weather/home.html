@@ -1,0 +1,24 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Weather App</h1>
+            <p>Discover, compare, and explore the weather with ease.</p>
+        </header>
+        <div class="menu">
+            <a href="{% url 'view_weather' %}" class="button">View Weather</a>
+            <a href="{% url 'compare_weather' %}" class="button">Compare Weather</a>
+            <a href="{% url 'search_weather' %}" class="button">Search by Location</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,201 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Comparison</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        /* General styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #fff;
+            animation: fadeSlideIn 1.5s ease-out; /* Updated fade-in animation */
+            will-change: opacity, transform;
+        }
+        /* New fade and slide animation */
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px); /* Slide in from top */
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0); /* Normal position */
+    }
+}
+
+/* Pop-up animation */
+@keyframes popUp {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            animation: popUp 0.6s ease-out forwards, fadeSlideIn 1.5s ease-out; /* Combined animations */
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        /* Buttons */
+        .button {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Forms */
+        form {
+            margin-top: 20px;
+        }
+
+        form input,
+        form select {
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            margin-right: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+        }
+
+        form button {
+            background: linear-gradient(45deg, #1e90ff, #00bfff);
+            padding: 10px 20px;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background: linear-gradient(45deg, #00bfff, #1e90ff);
+        }
+
+        /* Map styles */
+        .map {
+            width: 100%;
+            height: 500px;
+            margin-top: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Popups */
+        .popup {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        .scrolling {
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        white-space: nowrap;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .scrolling h2 {
+        display: inline-block;
+        white-space: nowrap;
+        animation: scrollLeftToRight 10s linear infinite;
+    }
+    .blablah {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+    @keyframes scrollLeftToRight {
+        0% {
+            transform: translateX(-100%);
+        }
+        100% {
+            transform: translateX(100%);
+        }
+    }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        {% if weather_data %}
+        <div class="scrolling">
+            <h2>Weather Comparison Weather Comparison Weather Comparison Weather Comparison</h2>
+        </div>
+        <div class = "blablah">
+            <table style="border: 2px solid #fff; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th>Country</th>
+                        <th>Temperature (°C)</th>
+                        <th>Humidity (%)</th>
+                    </tr>
+                </thead>
+                <tbody id="weatherDataBody">
+                    {% for data in weather_data %}
+                        <tr>
+                            <td>{{ data.name }}</td>
+                            <td>{{ data.temp }} °C</td>
+                            <td>{{ data.humidity }}%</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+        </div>
+            
+        {% else %}
+            <p>No weather data available to compare. Please try again.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

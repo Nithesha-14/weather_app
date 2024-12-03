@@ -1,0 +1,160 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colorful Weather Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+        .weather-info {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .legend {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .legend h4 {
+            margin: 0 0 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .legend div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .legend div span {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div class="weather-info" id="weather-info">
+        <h3 id="country-name">Hover over a country</h3>
+        <p id="temp">Temp: --°C</p>
+        <p id="humidity">Humidity: --%</p>
+    </div>
+    <div class="legend" id="legend">
+        <h4>Temperature Legend</h4>
+        <div><span style="background-color: #0000FF;"></span> ≤ 10°C (Cold)</div>
+        <div><span style="background-color: #00FF00;"></span> 11°C - 20°C (Moderate)</div>
+        <div><span style="background-color: #FFFF00;"></span> 21°C - 30°C (Warm)</div>
+        <div><span style="background-color: #FF0000;"></span> > 30°C (Hot)</div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-geojson-popup@1.0.0/leaflet-geojson-popup.min.js"></script>
+    <script>
+        const map = L.map('map').setView([20.5937, 78.9629], 3);  // Centered on India
+
+        // Use a colorful tile layer from CartoDB (Positron)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CartoDB</a>',
+        }).addTo(map);
+
+        // Fetch country boundaries in GeoJSON format
+        fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
+            .then(response => response.json())
+            .then(geojson => {
+                // Fetch weather data from Django backend
+                fetch('/fetch-weather-data/')
+                    .then(response => response.json())
+                    .then(data => {
+                        // Create a dictionary of country data by country name
+                        let countryData = {};
+                        data.forEach(country => {
+                            countryData[country.name] = {
+                                temp: country.temp,
+                                humidity: country.humidity,
+                                rain: country.rain,
+                                lat: country.lat,
+                                lon: country.lon
+                            };
+                        });
+
+                        // Add GeoJSON layer with country boundaries and color the countries based on the temperature
+                        L.geoJSON(geojson, {
+                            style: function (feature) {
+                                const countryName = feature.properties.name;
+                                const weather = countryData[countryName];
+                                const color = weather ? getColorForTemperature(weather.temp) : '#FFFFFF'; // Default color if no weather data
+                                return {
+                                    fillColor: color,
+                                    weight: 1,
+                                    opacity: 1,
+                                    color: 'black',
+                                    dashArray: '3',
+                                    fillOpacity: 0.7
+                                };
+                            },
+                            onEachFeature: function (feature, layer) {
+                                const countryName = feature.properties.name;
+                                const weather = countryData[countryName];
+                                layer.on('mouseover', function () {
+                                    // Show weather data when hovering over the country
+                                    updateWeatherInfo(countryName, weather);
+                                }).on('mouseout', function () {
+                                    // Reset the weather info when the mouse leaves the country
+                                    resetWeatherInfo();
+                                });
+                            }
+                        }).addTo(map);
+                    })
+                    .catch(error => console.error('Error fetching weather data:', error));
+            })
+            .catch(error => console.error('Error fetching GeoJSON data:', error));
+
+        // Function to get color based on temperature
+        function getColorForTemperature(temp) {
+            if (temp <= 10) return '#0000FF';  // Cold (blue)
+            if (temp <= 20) return '#00FF00';  // Moderate (green)
+            if (temp <= 30) return '#FFFF00';  // Warm (yellow)
+            return '#FF0000';  // Hot (red)
+        }
+
+        // Function to update the weather info in the UI
+        function updateWeatherInfo(countryName, weather) {
+            document.getElementById('country-name').textContent = countryName;
+            document.getElementById('temp').textContent = `Temp: ${weather.temp}°C`;
+            document.getElementById('humidity').textContent = `Humidity: ${weather.humidity}%`;
+        }
+
+        // Function to reset the weather info UI
+        function resetWeatherInfo() {
+            document.getElementById('country-name').textContent = "Hover over a country";
+            document.getElementById('temp').textContent = "Temp: --°C";
+            document.getElementById('humidity').textContent = "Humidity: --%";
+        }
+    </script>
+</body>
+</html>

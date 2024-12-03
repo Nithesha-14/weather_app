@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Results</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #fff;
+            animation: fadeSlideIn 1.5s ease-out; /* Updated fade-in animation */
+            will-change: opacity, transform;
+        }
+        /* New fade and slide animation */
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px); /* Slide in from top */
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0); /* Normal position */
+    }
+}
+
+/* Pop-up animation */
+@keyframes popUp {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            animation: popUp 0.6s ease-out forwards, fadeSlideIn 1.5s ease-out; /* Combined animations */
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        /* Buttons */
+        .button {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Forms */
+        form {
+            margin-top: 20px;
+        }
+
+        form input,
+        form select {
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            margin-right: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+        }
+
+        form button {
+            background: linear-gradient(45deg, #1e90ff, #00bfff);
+            padding: 10px 20px;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background: linear-gradient(45deg, #00bfff, #1e90ff);
+        }
+
+        /* Map styles */
+        .map {
+            width: 100%;
+            height: 500px;
+            margin-top: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Popups */
+        .popup {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        .blabla {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.scrolling {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    white-space: nowrap;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.scrolling h2 {
+    display: inline-block;
+    white-space: nowrap;
+    animation: scrollLeftToRight 10s linear infinite;
+}
+
+
+@keyframes scrollLeftToRight {
+    0% {
+        transform: translateX(100%); /* Start from right */
+    }
+    100% {
+        transform: translateX(-100%); /* End at left */
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="scrolling">
+        <h2>Weather in {{ weather_data.name }} Weather in {{ weather_data.name }}</h2>
+    </div>
+        <div class="blabla">
+        <table style="border: 2px solid #fff; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th>Information</th>
+                    <th>Value </th>
+                </tr>
+            </thead>
+            <tbody id="weatherDataBody">
+                    <tr>
+                        <td>Temperature</td>
+                        <td>{{ weather_data.temp }}°C</td>
+                    </tr>
+                    <tr>
+                        <td>Humidity</td>
+                        <td>{{ weather_data.humidity }}%</td>
+                    </tr>
+                    <tr>
+                        <td>Pressure</td>
+                        <td>{{ weather_data.pressure }}Pa</td>
+                    </tr>
+                    <tr>
+                        <td>Visibility</td>
+                        <td>{{ weather_data.visibility}}m</td>
+                    </tr>
+            </tbody>
+        </table>
+    </div>
+        <a class="button" href="{% url 'search_weather' %}">Search Again</a>
+    </div>
+</body>
+</html>
